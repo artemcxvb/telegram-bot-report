@@ -3,29 +3,30 @@ import requests
 
 app = Flask(__name__)
 
-BOT_TOKEN = "7960898905:AAF78UoHr0IefNjyvLGildRqIhJqhJv5jkI"
-API_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+# Токен бота Telegram
+TOKEN = "7853699104:AAGKCXqpgdSfFagz5M6zdfDSiEVAOYNmsN4"
+API_URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 @app.route("/", methods=["GET"])
-def home():
+def index():
     return "✅ Бот запущен и готов к работе."
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
     try:
         data = request.get_json()
-        print("📩 Получен POST от Telegram")
-        print(data)
+        print("📨 Получен POST от Telegram:", data)
 
-        # Обработка текстовых сообщений
         if "message" in data:
             chat_id = data["message"]["chat"]["id"]
             text = data["message"].get("text", "")
-            reply = f"🤖 Бот работает! Ты написал: {text}"
+            reply = f"Привет, ты написал: {text}"
             send_message(chat_id, reply)
+
         return "ok"
+
     except Exception as e:
-        print("❌ Ошибка:", e)
+        print(f"❌ Ошибка при обработке запроса: {e}")
         return "error"
 
 def send_message(chat_id, text):
@@ -33,8 +34,8 @@ def send_message(chat_id, text):
         "chat_id": chat_id,
         "text": text
     }
-    response = requests.post(API_URL, json=payload)
-    print(f"📤 Ответ отправлен. Статус: {response.status_code}")
+    r = requests.post(API_URL, json=payload)
+    print(f"📤 Ответ отправлен. Статус: {r.status_code}")
 
 if __name__ == "__main__":
     import os
